@@ -274,6 +274,11 @@ function icon(string $name, string $class = 'ico'): string
         'menu'      => '<path d="M4 7h16M4 12h16M4 17h16"/>',
         'close'     => '<path d="M6 6l12 12M18 6L6 18"/>',
         'arrow'     => '<path d="M5 12h14M13 6l6 6-6 6"/>',
+        'chart'     => '<path d="M4 4v16h16"/><path d="M8 15l4-4 3 3 5-6"/>',
+        'shield'    => '<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+        'smile'     => '<circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/>',
+        'monitor'   => '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+        'mobile'    => '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
     ];
     $p = $paths[$name] ?? $paths['bus'];
     return '<svg class="' . e($class) . '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $p . '</svg>';
@@ -290,4 +295,47 @@ function icon_names(): array
 function vehicle_silhouette(): string
 {
     return '<svg class="veh-sil" viewBox="0 0 220 90" aria-hidden="true"><path d="M14 66V24c0-7 5-12 12-12h150c12 0 22 8 26 20l6 18v16" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M14 66h196" stroke="currentColor" stroke-width="3"/><path d="M30 24h38v20H30zM78 24h38v20H78zM126 24h38v20h-38zM174 24h14c6 0 10 4 12 9l4 11h-30z" fill="currentColor" opacity=".18"/><circle cx="52" cy="68" r="11" fill="var(--paper)" stroke="currentColor" stroke-width="3"/><circle cx="170" cy="68" r="11" fill="var(--paper)" stroke="currentColor" stroke-width="3"/></svg>';
+}
+
+/* ---------- Banner ve görseller ---------- */
+
+/** Ana sayfa banner görselleri: panelden yüklenenler, yoksa assets/img/banner-*.jpg */
+function banners(): array
+{
+    $out = [];
+    foreach (db()->query('SELECT * FROM banners WHERE active = 1 ORDER BY sort, id') as $b) {
+        $out[] = ['src' => upload_url($b['image']), 'focus' => (int)$b['focus']];
+    }
+    if (!$out) {
+        foreach (glob(ROOT . '/assets/img/banner-*.{jpg,jpeg,png,webp}', GLOB_BRACE) ?: [] as $f) {
+            $out[] = ['src' => url('assets/img/' . basename($f)), 'focus' => 50];
+        }
+    }
+    return $out;
+}
+
+/** Ayardaki görsel: panelden yüklendiyse o, yoksa assets/img içindeki varsayılan dosya */
+function setting_image(string $key, string $fallback = ''): string
+{
+    $v = setting($key);
+    if ($v !== '') return upload_url($v);
+    if ($fallback !== '' && is_file(ROOT . '/assets/img/' . $fallback)) return url('assets/img/' . $fallback);
+    return '';
+}
+
+/** Her satırı ayrı madde olarak döner */
+function setting_lines(string $key): array
+{
+    return array_values(array_filter(array_map('trim', preg_split('/\R/', setting($key))), 'strlen'));
+}
+
+/** "Başlık | açıklama" satırlarını döner */
+function setting_pairs(string $key): array
+{
+    $items = [];
+    foreach (setting_lines($key) as $line) {
+        [$t, $d] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
+        $items[] = ['title' => $t, 'text' => $d];
+    }
+    return $items;
 }

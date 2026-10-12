@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/includes/bootstrap.php';
+require __DIR__ . '/includes/mockups.php';
 
 $services = active_services();
 $featured = array_slice($services, 0, 2);
@@ -10,28 +11,38 @@ $flash    = flash();
 $old      = $_SESSION['old_form'] ?? [];
 unset($_SESSION['old_form']);
 $pre      = $_GET['hizmet'] ?? ($old['service'] ?? '');
+$slides   = banners();
+$aboutImg = setting_image('about_image', 'about.jpg');
 
 require __DIR__ . '/includes/header.php';
 ?>
-<section class="hero">
-  <div class="wrap hero__in">
-    <div class="hero__copy">
-      <h1 class="hero__title"><?= e(setting('hero_title')) ?></h1>
-      <p class="hero__text"><?= e(setting('hero_text')) ?></p>
-      <div class="hero__actions">
-        <a class="btn btn--solid btn--lg" href="#teklif">Teklif alın</a>
-        <a class="btn btn--line btn--lg" href="<?= e(tel_href(setting('phone'))) ?>"><?= icon('phone') ?><?= e(setting('phone')) ?></a>
+<section class="hero <?= $slides ? 'hero--photo' : 'hero--plain' ?>">
+  <?php if ($slides): ?>
+  <div class="hero__media" data-slider>
+    <?php foreach ($slides as $i => $b): ?>
+    <img class="hero__slide<?= $i === 0 ? ' is-on' : '' ?>" src="<?= e($b['src']) ?>" alt="" style="--fx: <?= (int)$b['focus'] ?>%" <?= $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?>>
+    <?php endforeach; ?>
+    <?php if (count($slides) > 1): ?>
+    <div class="hero__dots" aria-label="Banner görselleri">
+      <?php foreach ($slides as $i => $b): ?><button type="button" class="<?= $i === 0 ? 'is-on' : '' ?>" aria-label="<?= $i + 1 ?>. görsel"></button><?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+  </div>
+  <?php endif; ?>
+  <div class="hero__body">
+    <div class="wrap">
+      <div class="hero__copy">
+        <h1 class="hero__title"><?= e(setting('hero_title')) ?></h1>
+        <p class="hero__text"><?= e(setting('hero_text')) ?></p>
+        <div class="hero__actions">
+          <a class="btn btn--solid btn--lg" href="#teklif">Teklif alın</a>
+          <a class="btn btn--ghost btn--lg" href="<?= e(tel_href(setting('phone'))) ?>"><?= icon('phone') ?><?= e(setting('phone')) ?></a>
+        </div>
       </div>
     </div>
-    <nav class="pick" aria-labelledby="pick-h">
-      <h2 class="pick__h" id="pick-h">Ne için servis arıyorsunuz?</h2>
-      <ul>
-        <?php foreach ($services as $s): ?>
-        <li><a href="<?= e(url('index.php?hizmet=' . $s['slug'])) ?>#teklif"><?= icon($s['icon']) ?><span><?= e($s['title']) ?></span><?= icon('arrow', 'ico pick__arrow') ?></a></li>
-        <?php endforeach; ?>
-      </ul>
-    </nav>
   </div>
+</section>
+<section class="routebar">
   <div class="route" aria-hidden="true">
     <div class="wrap route__in">
       <div class="route__line"><span class="route__bus"><?= icon('bus') ?></span></div>
@@ -77,6 +88,50 @@ require __DIR__ . '/includes/header.php';
   </div>
 </section>
 
+<section class="online" id="online">
+  <div class="wrap">
+    <div class="online__head">
+      <p class="online__label"><?= e(setting('online_label')) ?></p>
+      <h2 class="online__title"><?= e(setting('online_title')) ?></h2>
+      <p class="online__lead"><?= e(setting('online_text')) ?></p>
+    </div>
+
+    <div class="orow">
+      <div class="orow__visual orow__visual--desk">
+        <?php $img = setting_image('online_img_company'); ?>
+        <?= $img ? '<img class="orow__shot" src="' . e($img) . '" alt="' . e(setting('online_company_title')) . '" loading="lazy">' : mockup_dashboard() ?>
+      </div>
+      <div class="orow__text">
+        <h3 class="orow__h"><?= icon('monitor', 'ico orow__ico') ?><?= e(setting('online_company_title')) ?></h3>
+        <ul class="ticks">
+          <?php foreach (setting_lines('online_company') as $line): ?><li><?= icon('check', 'ico ticks__ico') ?><span><?= e($line) ?></span></li><?php endforeach; ?>
+        </ul>
+      </div>
+    </div>
+
+    <div class="orow orow--rev">
+      <div class="orow__visual orow__visual--phone">
+        <?php $img = setting_image('online_img_mobile'); ?>
+        <?= $img ? '<img class="orow__shot orow__shot--phone" src="' . e($img) . '" alt="' . e(setting('online_mobile_title')) . '" loading="lazy">' : mockup_phone() ?>
+      </div>
+      <div class="orow__text">
+        <h3 class="orow__h"><?= icon('mobile', 'ico orow__ico') ?><?= e(setting('online_mobile_title')) ?></h3>
+        <ul class="ticks">
+          <?php foreach (setting_lines('online_mobile') as $line): ?><li><?= icon('check', 'ico ticks__ico') ?><span><?= e($line) ?></span></li><?php endforeach; ?>
+        </ul>
+      </div>
+    </div>
+
+    <?php $ben = setting_pairs('online_benefits'); if ($ben): $bi = ['chart', 'shield', 'smile']; ?>
+    <ul class="benefits">
+      <?php foreach ($ben as $i => $b): ?>
+      <li><?= icon($bi[$i % 3], 'ico benefits__ico') ?><strong><?= e($b['title']) ?></strong><span><?= e($b['text']) ?></span></li>
+      <?php endforeach; ?>
+    </ul>
+    <?php endif; ?>
+  </div>
+</section>
+
 <?php if ($vehicles): ?>
 <section class="section section--mist" id="filo">
   <div class="wrap">
@@ -86,14 +141,10 @@ require __DIR__ . '/includes/header.php';
     </div>
     <div class="fleet">
       <?php foreach ($vehicles as $v): ?>
-      <article class="veh">
-        <div class="veh__media">
-          <?php if ($v['image']): ?>
-            <img src="<?= e(upload_url($v['image'])) ?>" alt="<?= e($v['name']) ?>" loading="lazy">
-          <?php else: ?>
-            <?= vehicle_silhouette() ?>
-          <?php endif; ?>
-        </div>
+      <article class="veh<?= $v['image'] ? '' : ' veh--plain' ?>">
+        <?php if ($v['image']): ?>
+        <div class="veh__media"><img src="<?= e(upload_url($v['image'])) ?>" alt="<?= e($v['name']) ?>" loading="lazy"></div>
+        <?php endif; ?>
         <div class="veh__cap"><?= e($v['capacity']) ?><small>kişilik</small></div>
         <h3 class="veh__name"><?= e($v['name']) ?></h3>
         <p class="veh__feat"><?= e($v['features']) ?></p>
@@ -105,7 +156,8 @@ require __DIR__ . '/includes/header.php';
 <?php endif; ?>
 
 <section class="section" id="hakkimizda">
-  <div class="wrap about">
+  <div class="wrap about<?= $aboutImg ? ' about--img' : '' ?>">
+    <?php if ($aboutImg): ?><figure class="about__img"><img src="<?= e($aboutImg) ?>" alt="<?= e(setting('site_title', 'Yaren Tur')) ?> servis aracı" loading="lazy"></figure><?php endif; ?>
     <div class="about__text">
       <h2 class="h2"><?= e(setting('about_title')) ?></h2>
       <?= paragraphs(setting('about_text')) ?>
