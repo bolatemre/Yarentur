@@ -16,6 +16,7 @@ function admin_header(string $title, string $active = ''): void
     $menu = [
         'index' => ['Özet', 'index.php'],
         'requests' => ['Teklif talepleri', 'requests.php'],
+        'banners' => ['Banner görselleri', 'banners.php'],
         'services' => ['Hizmetler', 'services.php'],
         'vehicles' => ['Araç filosu', 'vehicles.php'],
         'clients' => ['Referanslar', 'clients.php'],
@@ -31,7 +32,7 @@ function admin_header(string $title, string $active = ''): void
 <meta name="robots" content="noindex, nofollow">
 <title><?= e($title) ?> | Yaren Tur Yönetim</title>
 <link rel="icon" href="<?= e(url('assets/img/favicon.svg')) ?>" type="image/svg+xml">
-<link rel="stylesheet" href="<?= e(url('admin/admin.css')) ?>?v=1">
+<link rel="stylesheet" href="<?= e(url('admin/admin.css')) ?>?v=2">
 </head>
 <body class="adm">
 <aside class="side" id="side">

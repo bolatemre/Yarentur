@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta name="robots" content="noindex, nofollow">
 <title><?= $setup ? 'Kurulum' : 'Giriş' ?> | Yaren Tur Yönetim</title>
 <link rel="icon" href="<?= e(url('assets/img/favicon.svg')) ?>" type="image/svg+xml">
-<link rel="stylesheet" href="<?= e(url('admin/admin.css')) ?>?v=1">
+<link rel="stylesheet" href="<?= e(url('admin/admin.css')) ?>?v=2">
 </head>
 <body class="auth">
 <form class="auth__box" method="post" autocomplete="on">

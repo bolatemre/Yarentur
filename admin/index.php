@@ -10,12 +10,12 @@ $week = (int)$pdo->query("SELECT COUNT(*) FROM requests WHERE created_at >= date
 $latest = $pdo->query('SELECT * FROM requests ORDER BY id DESC LIMIT 6')->fetchAll();
 $svcCount = (int)$pdo->query('SELECT COUNT(*) FROM services WHERE active = 1')->fetchColumn();
 $vehCount = (int)$pdo->query('SELECT COUNT(*) FROM vehicles WHERE active = 1')->fetchColumn();
-$needsSetup = str_contains(setting('phone'), 'x') || str_starts_with(setting('address'), 'Adres bilgisini');
+$needsSetup = str_starts_with(setting('address'), 'Adres bilgisini');
 
 admin_header('Özet', 'index');
 ?>
 <?php if ($needsSetup): ?>
-<div class="alert alert--warn">Telefon ve adres hâlâ örnek bilgilerle görünüyor. <a href="settings.php">Site ayarlarından</a> gerçek bilgileri girin.</div>
+<div class="alert alert--warn">Adres hâlâ örnek bilgiyle görünüyor. <a href="settings.php">Site ayarlarından</a> gerçek bilgileri girin.</div>
 <?php endif; ?>
 <div class="stats">
   <a class="stat stat--hot" href="requests.php?status=yeni"><b><?= $counts['yeni'] ?? 0 ?></b><span>Yanıt bekleyen talep</span></a>
