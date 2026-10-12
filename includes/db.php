@@ -16,6 +16,7 @@ function db(): PDO
     $pdo->exec('PRAGMA foreign_keys = ON');
 
     migrate($pdo);
+    ensure_settings($pdo);
     if ($fresh) seed($pdo);
     return $pdo;
 }
@@ -76,6 +77,13 @@ function migrate(PDO $pdo): void
         ip TEXT NOT NULL DEFAULT '',
         created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
+    CREATE TABLE IF NOT EXISTS banners (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        image TEXT NOT NULL,
+        focus INTEGER NOT NULL DEFAULT 50,
+        sort INTEGER NOT NULL DEFAULT 0,
+        active INTEGER NOT NULL DEFAULT 1
+    );
     CREATE TABLE IF NOT EXISTS login_attempts (
         ip TEXT NOT NULL,
         at INTEGER NOT NULL
@@ -85,28 +93,7 @@ function migrate(PDO $pdo): void
 
 function seed(PDO $pdo): void
 {
-    $settings = [
-        'site_title'       => 'Yaren Tur',
-        'meta_description' => 'Yaren Tur: öğrenci taşımacılığı, personel taşımacılığı, tur organizasyonu, havalimanı ve VIP transfer hizmetleri.',
-        'phone'            => '0 (5xx) xxx xx xx',
-        'phone2'           => '',
-        'whatsapp'         => '',
-        'email'            => 'info@yarentur.com.tr',
-        'notify_email'     => '',
-        'address'          => 'Adres bilgisini yönetim panelinden girin',
-        'working_hours'    => 'Pazartesi – Cumartesi, 08:00 – 19:00',
-        'hero_title'       => 'Her sabah aynı saatte, kapınızın önünde.',
-        'hero_text'        => 'Okul servisinden fabrika vardiyasına, hafta sonu gezisinden havalimanı transferine kadar yolcularınızı güvenle taşıyoruz.',
-        'about_title'      => 'Yaren Tur hakkında',
-        'about_text'       => "Yaren Tur, öğrenci ve personel taşımacılığı başta olmak üzere kurumlara ve ailelere düzenli ulaşım hizmeti veren bir turizm firmasıdır.\n\nAraçlarımız düzenli bakımdan geçer, şoförlerimiz güzergahlarını bilir ve her sefer planlanan saatte başlar.",
-        'highlights'       => "Rehber personel | Okul servislerinde çocuklara araç içinde rehber personel eşlik eder.\nZamanında kalkış | Güzergah ve saatler önceden planlanır, değişiklikler size bildirilir.\nBakımlı araçlar | Araçlarımız periyodik bakım ve muayeneden geçer.\nSigortalı yolculuk | Yolcularımız koltuk sigortası kapsamında seyahat eder.",
-        'map_embed'        => '',
-        'instagram'        => '',
-        'facebook'         => '',
-        'logo'             => '',
-    ];
-    $st = $pdo->prepare('INSERT OR IGNORE INTO settings(key, value) VALUES(?, ?)');
-    foreach ($settings as $k => $v) $st->execute([$k, $v]);
+    // Ayar varsayılanları ensure_settings() ile ekleniyor
 
     $services = [
         ['ogrenci-tasimaciligi', 'Öğrenci Taşımacılığı', 'Okul servislerinde rehber personel, sabit güzergah ve velilerle düzenli iletişim.', "Öğrencilerinizi evden okula, okuldan eve güvenle taşıyoruz.\n\nHer araçta rehber personel bulunur. Güzergah ve alım saatleri dönem başında velilerle paylaşılır, değişiklikler önceden bildirilir.\n\nOkul yönetimleriyle sözleşmeli çalışır, servis yönetmeliğine uygun araç ve belgelerle hizmet veririz.", 'school', 1],
@@ -127,4 +114,41 @@ function seed(PDO $pdo): void
     ];
     $st = $pdo->prepare('INSERT INTO vehicles(name, capacity, features, sort) VALUES(?,?,?,?)');
     foreach ($vehicles as $v) $st->execute($v);
+}
+
+function ensure_settings(PDO $pdo): void
+{
+    $settings = [
+        'site_title'       => 'Yaren Tur',
+        'meta_description' => 'Yaren Tur: öğrenci taşımacılığı, personel taşımacılığı, tur organizasyonu, havalimanı ve VIP transfer hizmetleri.',
+        'phone'            => '0212 689 96 59',
+        'phone2'           => '',
+        'whatsapp'         => '',
+        'email'            => 'info@yarentur.com.tr',
+        'notify_email'     => '',
+        'address'          => 'Adres bilgisini yönetim panelinden girin',
+        'working_hours'    => 'Pazartesi – Cumartesi, 08:00 – 19:00',
+        'hero_title'       => 'Her sabah aynı saatte, kapınızın önünde.',
+        'hero_text'        => 'Okul servisinden fabrika vardiyasına, hafta sonu gezisinden havalimanı transferine kadar yolcularınızı güvenle taşıyoruz.',
+        'about_title'      => 'Yaren Tur hakkında',
+        'about_text'       => "Yaren Tur, öğrenci ve personel taşımacılığı başta olmak üzere kurumlara ve ailelere düzenli ulaşım hizmeti veren bir turizm firmasıdır.\n\nAraçlarımız düzenli bakımdan geçer, şoförlerimiz güzergahlarını bilir ve her sefer planlanan saatte başlar.",
+        'highlights'       => "Rehber personel | Okul servislerinde çocuklara araç içinde rehber personel eşlik eder.\nZamanında kalkış | Güzergah ve saatler önceden planlanır, değişiklikler size bildirilir.\nBakımlı araçlar | Araçlarımız periyodik bakım ve muayeneden geçer.\nSigortalı yolculuk | Yolcularımız koltuk sigortası kapsamında seyahat eder.",
+        'map_embed'        => '',
+        'instagram'        => '',
+        'facebook'         => '',
+        'logo'             => '',
+        'about_image'      => '',
+        'online_label'     => 'Online ulaşım çözümleri',
+        'online_title'     => 'Taşımacılığı teknolojiyle birleştirdik',
+        'online_text'      => 'Servislerinizi veriyle yönetiyoruz: canlı takip, dijital raporlama ve anlık bildirim.',
+        'online_company_title' => 'Firma ekranında',
+        'online_company'   => "Tüm servisleriniz tek listede; her seferin detayına anında ulaşın.\nGüzergâh ve yolcuları canlı harita üzerinde tek bakışta görün.\nSürücü ve araç evraklarını dijital arşivden denetleyin, süresi yaklaşan belgeler için uyarı alın.\nHer seferin süresini, mesafesini ve maliyetini ölçün.\nBiniş-iniş saatlerini raporlayın, raporları Excel veya PDF olarak alın.",
+        'online_mobile_title' => 'Yolcu ve veli mobilde',
+        'online_mobile'    => "Servisinizin durumunu ve detaylarını anlık görün.\nPlanlanan alınış ve bırakılış saatlerini önceden öğrenin.\nAracın plaka ve belge bilgilerine ulaşın.\nServis sorumlusuna tek dokunuşla ulaşın.\nServisin yaklaşmasını canlı haritadan izleyin, kapıda beklemeyin.",
+        'online_benefits'  => "Operasyonel verimlilik | Tüm filo ve güzergâhlar tek ekranda; planlama ve raporlama dakikalar içinde.\nGüvenli ve şeffaf ulaşım | Araç ve sürücü bilgileri güncel; gerçek zamanlı harita takibiyle her servis kontrol altında.\nYolcu memnuniyeti | Yolcular servisini canlı görür, bildirimlerle yolculuğun her adımından haberdar olur.",
+        'online_img_company' => '',
+        'online_img_mobile'  => '',
+    ];
+    $st = $pdo->prepare('INSERT OR IGNORE INTO settings(key, value) VALUES(?, ?)');
+    foreach ($settings as $k => $v) $st->execute([$k, $v]);
 }

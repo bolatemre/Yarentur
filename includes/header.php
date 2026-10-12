@@ -21,7 +21,7 @@ $home = url('');
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Saira:wdth,wght@112.5,600;112.5,700;112.5,800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="<?= e(url('assets/css/style.css')) ?>?v=1">
+<link rel="stylesheet" href="<?= e(url('assets/css/style.css')) ?>?v=2">
 </head>
 <body>
 <a class="skip" href="#icerik">İçeriğe geç</a>
@@ -32,6 +32,7 @@ $home = url('');
     </a>
     <nav class="nav" id="nav" aria-label="Ana menü">
       <a href="<?= e($home) ?>#hizmetler">Hizmetler</a>
+      <a href="<?= e($home) ?>#online">Online çözümler</a>
       <a href="<?= e($home) ?>#filo">Araç filomuz</a>
       <a href="<?= e($home) ?>#hakkimizda">Hakkımızda</a>
       <a href="<?= e($home) ?>#iletisim">İletişim</a>
