@@ -11,6 +11,16 @@ $home = url('');
       <p class="foot__about"><?= e(setting('meta_description')) ?></p>
     </div>
     <div>
+      <h2 class="foot__h">Kurumsal</h2>
+      <ul class="foot__list">
+        <li><a href="<?= e(url('hakkimizda.php')) ?>">Hakkımızda</a></li>
+        <li><a href="<?= e(url('online-cozumler.php')) ?>">Online çözümler</a></li>
+        <li><a href="<?= e(url('filo.php')) ?>">Araç filomuz</a></li>
+        <li><a href="<?= e(url('iletisim.php')) ?>">İletişim</a></li>
+        <li><a href="<?= e(url('iletisim.php')) ?>#teklif">Teklif alın</a></li>
+      </ul>
+    </div>
+    <div>
       <h2 class="foot__h">Hizmetler</h2>
       <ul class="foot__list">
         <?php foreach (active_services() as $s): ?>
@@ -43,11 +53,11 @@ $home = url('');
 <div class="quickbar">
   <a class="quickbar__btn" href="<?= e(tel_href(setting('phone'))) ?>"><?= icon('phone') ?>Arayın</a>
   <?php if ($wa): ?><a class="quickbar__btn quickbar__btn--wa" href="<?= e($wa) ?>" target="_blank" rel="noopener"><?= icon('wa') ?>WhatsApp</a><?php endif; ?>
-  <a class="quickbar__btn quickbar__btn--go" href="<?= e($home) ?>#teklif">Teklif alın</a>
+  <a class="quickbar__btn quickbar__btn--go" href="<?= e(url('iletisim.php')) ?>#teklif">Teklif alın</a>
 </div>
 <?php if ($wa): ?>
 <a class="wa-float" href="<?= e($wa) ?>" target="_blank" rel="noopener" aria-label="WhatsApp ile yazın"><?= icon('wa') ?></a>
 <?php endif; ?>
-<script src="<?= e(url('assets/js/main.js')) ?>?v=2" defer></script>
+<script src="<?= e(url('assets/js/main.js')) ?>?v=3" defer></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/includes/bootstrap.php';
+require __DIR__ . '/includes/page.php';
 
 $st = db()->prepare('SELECT * FROM services WHERE slug = ? AND active = 1');
 $st->execute([(string)($_GET['s'] ?? '')]);
@@ -8,31 +8,23 @@ if (!$svc) {
     http_response_code(404);
     $page_title = 'Sayfa bulunamadı';
     require __DIR__ . '/includes/header.php';
-    echo '<section class="section"><div class="wrap narrow"><h1 class="h2">Bu hizmet sayfası bulunamadı</h1><p>Hizmet kaldırılmış ya da adres değişmiş olabilir.</p><p><a class="btn btn--solid" href="' . e(url('')) . '#hizmetler">Tüm hizmetlere dönün</a></p></div></section>';
+    echo '<section class="section"><div class="wrap narrow"><h1 class="h2">Bu hizmet sayfası bulunamadı</h1><p>Hizmet kaldırılmış ya da adres değişmiş olabilir.</p><p><a class="btn btn--solid" href="' . e(url('hizmetler.php')) . '">Tüm hizmetlere dönün</a></p></div></section>';
     require __DIR__ . '/includes/footer.php';
     exit;
 }
 $page_title = $svc['title'];
 $page_desc  = $svc['summary'];
+$active = 'services';
 $others = array_filter(active_services(), fn($s) => $s['id'] !== $svc['id']);
 require __DIR__ . '/includes/header.php';
 ?>
-<section class="phead">
-  <div class="wrap">
-    <nav class="crumbs" aria-label="Konum"><a href="<?= e(url('')) ?>">Ana sayfa</a> / <a href="<?= e(url('')) ?>#hizmetler">Hizmetler</a></nav>
-    <div class="phead__row">
-      <span class="phead__ico"><?= icon($svc['icon']) ?></span>
-      <h1 class="phead__title"><?= e($svc['title']) ?></h1>
-    </div>
-    <p class="lead"><?= e($svc['summary']) ?></p>
-  </div>
-</section>
+<?php page_head($svc['title'], $svc['summary'], ['Hizmetler' => url('hizmetler.php'), $svc['title'] => url('hizmet.php?s=' . $svc['slug'])], $svc['icon']); ?>
 <section class="section section--tight">
   <div class="wrap detail">
     <article class="detail__body">
       <?php if ($svc['image']): ?><img class="detail__img" src="<?= e(upload_url($svc['image'])) ?>" alt="<?= e($svc['title']) ?>"><?php endif; ?>
       <?= paragraphs($svc['body']) ?>
-      <p><a class="btn btn--solid btn--lg" href="<?= e(url('index.php?hizmet=' . $svc['slug'])) ?>#teklif">Bu hizmet için teklif alın</a></p>
+      <p><a class="btn btn--solid btn--lg" href="<?= e(url('iletisim.php?hizmet=' . $svc['slug'])) ?>#teklif">Bu hizmet için teklif alın</a></p>
     </article>
     <aside class="detail__side">
       <div class="callbox">
@@ -51,4 +43,5 @@ require __DIR__ . '/includes/header.php';
     </aside>
   </div>
 </section>
-<?php require __DIR__ . '/includes/footer.php';
+<?php part('cta');
+require __DIR__ . '/includes/footer.php';

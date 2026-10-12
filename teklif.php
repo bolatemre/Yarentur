@@ -1,10 +1,10 @@
 <?php
 require __DIR__ . '/includes/bootstrap.php';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') redirect(url('') . '#teklif');
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') redirect(url('iletisim.php') . '#teklif');
 csrf_check();
 
-$back = url('') . '#teklif';
+$back = url('iletisim.php') . '#teklif';
 // Bot tuzağı
 if (!empty($_POST['website'])) redirect($back);
 

@@ -21,24 +21,38 @@ $home = url('');
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Saira:wdth,wght@112.5,600;112.5,700;112.5,800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="<?= e(url('assets/css/style.css')) ?>?v=2">
+<link rel="stylesheet" href="<?= e(url('assets/css/style.css')) ?>?v=3">
 </head>
 <body>
 <a class="skip" href="#icerik">İçeriğe geç</a>
+<div class="util">
+  <div class="wrap util__in">
+    <span class="util__item"><?= icon('clock') ?><?= e(setting('working_hours')) ?></span>
+    <a class="util__item" href="mailto:<?= e(setting('email')) ?>"><?= icon('mail') ?><?= e(setting('email')) ?></a>
+    <a class="util__item util__item--strong" href="<?= e(tel_href($phone)) ?>"><?= icon('phone') ?><?= e($phone) ?></a>
+  </div>
+</div>
 <header class="topbar" id="top">
   <div class="wrap topbar__in">
     <a class="brand" href="<?= e($home) ?>" aria-label="<?= e($siteTitle) ?> ana sayfa">
       <?= brand_html('brandmark') ?>
     </a>
     <nav class="nav" id="nav" aria-label="Ana menü">
-      <a href="<?= e($home) ?>#hizmetler">Hizmetler</a>
-      <a href="<?= e($home) ?>#online">Online çözümler</a>
-      <a href="<?= e($home) ?>#filo">Araç filomuz</a>
-      <a href="<?= e($home) ?>#hakkimizda">Hakkımızda</a>
-      <a href="<?= e($home) ?>#iletisim">İletişim</a>
-      <a class="btn btn--solid nav__cta" href="<?= e($home) ?>#teklif">Teklif alın</a>
+      <?php
+      $navItems = [
+          'home' => ['Ana sayfa', $home],
+          'about' => ['Kurumsal', url('hakkimizda.php')],
+          'services' => ['Hizmetler', url('hizmetler.php')],
+          'online' => ['Online çözümler', url('online-cozumler.php')],
+          'fleet' => ['Araç filomuz', url('filo.php')],
+          'contact' => ['İletişim', url('iletisim.php')],
+      ];
+      foreach ($navItems as $key => [$label, $href]): ?>
+      <a href="<?= e($href) ?>"<?= ($active ?? '') === $key ? ' class="is-on" aria-current="page"' : '' ?>><?= e($label) ?></a>
+      <?php endforeach; ?>
+      <a class="btn btn--solid nav__cta" href="<?= e(url('iletisim.php')) ?>#teklif">Teklif alın</a>
     </nav>
-    <a class="topbar__phone" href="<?= e(tel_href($phone)) ?>"><?= icon('phone') ?><span><?= e($phone) ?></span></a>
+    <a class="topbar__phone" href="<?= e(tel_href($phone)) ?>" aria-label="Ara: <?= e($phone) ?>"><?= icon('phone') ?></a>
     <button class="navtoggle" type="button" aria-controls="nav" aria-expanded="false" aria-label="Menüyü aç">
       <?= icon('menu', 'ico ico--open') ?><?= icon('close', 'ico ico--close') ?>
     </button>
