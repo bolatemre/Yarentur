@@ -73,7 +73,7 @@ if (isset($_GET['edit'])) {
 $rows = $pdo->query('SELECT * FROM vehicles ORDER BY sort, id')->fetchAll();
 admin_header('Araç filosu', 'vehicles');
 ?>
-<div class="toolbar"><p class="muted">Fotoğrafı olmayan araçlar sitede çizim olarak görünür.</p><a class="b b--pri" href="?edit=new">Yeni araç ekle</a></div>
+<div class="toolbar"><p class="muted">Fotoğrafı olmayan araçlar sitede sade bir kart olarak görünür; gerçek araç fotoğrafı eklemeniz önerilir.</p><a class="b b--pri" href="?edit=new">Yeni araç ekle</a></div>
 <section class="card">
 <?php if (!$rows): ?><p class="empty">Henüz araç eklenmedi.</p><?php else: ?>
   <div class="tbl-wrap"><table class="tbl">

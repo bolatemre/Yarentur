@@ -7,7 +7,8 @@ Saf PHP + SQLite ile yazıldı. Composer, Node veya ayrı bir MySQL veritabanı 
 ## Özellikler
 
 **Site**
-- Ana sayfa: hizmetler, araç filosu, hakkımızda, referanslar, teklif formu, iletişim ve harita
+- Ana sayfa: fotoğraflı banner, hizmetler, online ulaşım çözümleri, araç filosu, hakkımızda, referanslar, teklif formu, iletişim ve harita
+- Online ulaşım çözümleri tanıtım bölümü (firma ekranı ve mobil uygulama anlatımı; metinler ve ekran görüntüleri panelden değiştirilebilir)
 - Her hizmet için ayrı detay sayfası (`hizmet.php?s=...`)
 - Teklif formu: talepler panele düşer, isteğe bağlı e-posta bildirimi gider
 - Mobilde alt bar (Arayın / WhatsApp / Teklif alın), masaüstünde WhatsApp butonu
@@ -16,10 +17,11 @@ Saf PHP + SQLite ile yazıldı. Composer, Node veya ayrı bir MySQL veritabanı 
 **Yönetim paneli (`/admin`)**
 - Özet ekranı: yanıt bekleyen ve son talepler
 - Teklif talepleri: durum takibi (Yeni, Arandı, Teklif verildi, Anlaşıldı, Olumsuz), iç not, arama, Excel'e (CSV) aktarma
+- Banner görselleri: ana sayfa fotoğraflarını ekle, sırala, odak noktasını ayarla
 - Hizmetler: ekle, düzenle, sırala, gizle, görsel yükle
 - Araç filosu: kapasite, özellikler, fotoğraf
 - Referanslar: kurum adı ve logo
-- Site ayarları: logo, telefon, WhatsApp, adres, harita, ana sayfa metinleri, "neden biz" maddeleri
+- Site ayarları: logo, hakkımızda fotoğrafı, telefon, WhatsApp, adres, harita, ana sayfa ve online çözümler metinleri
 - Hesabım: şifre değiştirme, yönetici ekleme
 - Hatalı girişlerde 15 dakikalık kilit
 
@@ -35,8 +37,14 @@ Saf PHP + SQLite ile yazıldı. Composer, Node veya ayrı bir MySQL veritabanı 
 2. hPanel → Dosya Yöneticisi → `public_html` içine yükleyip açın. (Eski WordPress sitesini silmeden önce yedek alın; isterseniz önce bir alt alan adında, örn. `yeni.yarentur.com.tr`, deneyin.)
 3. `data/` ve `uploads/` klasörlerinin yazılabilir olduğundan emin olun (izin 755).
 4. Tarayıcıda `alanadiniz/admin` adresine gidin. İlk açılışta **yönetici hesabı oluşturma** ekranı gelir; kullanıcı adı ve şifrenizi belirleyin.
-5. **Site ayarları → Logo** bölümünden logoyu yükleyin (ya da logo dosyasını `assets/img/logo.png` adıyla koyun). Ardından telefon, WhatsApp, adres, e-posta ve haritayı girin. Örnek bilgiler girilene kadar panel uyarı gösterir.
-6. SSL aktifse kök dizindeki `.htaccess` içinde HTTPS yönlendirme satırlarının başındaki `#` işaretlerini kaldırın.
+5. Görselleri yükleyin:
+   - **Site ayarları → Logo**: firma logosu
+   - **Banner görselleri**: ana sayfanın üstündeki araç fotoğrafları
+   - **Site ayarları → Görseller**: hakkımızda fotoğrafı
+
+   (Alternatif: dosyaları Dosya Yöneticisi ile `assets/img/` içine `logo.png`, `banner-1.jpg`, `banner-2.jpg`, `about.jpg` adlarıyla koyabilirsiniz.)
+6. Site ayarlarından adres, e-posta, WhatsApp ve haritayı girin. Örnek bilgiler girilene kadar panel uyarı gösterir.
+7. SSL aktifse kök dizindeki `.htaccess` içinde HTTPS yönlendirme satırlarının başındaki `#` işaretlerini kaldırın.
 
 Veritabanı (`data/yarentur.sqlite`) ilk açılışta örnek hizmet ve araçlarla otomatik oluşur.
 
