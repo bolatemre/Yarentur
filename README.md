@@ -7,7 +7,8 @@ Saf PHP + SQLite ile yazıldı. Composer, Node veya ayrı bir MySQL veritabanı 
 ## Özellikler
 
 **Site**
-- Ana sayfa: fotoğraflı banner, hizmetler, online ulaşım çözümleri, araç filosu, hakkımızda, referanslar, teklif formu, iletişim ve harita
+- Çok sayfalı yapı: Ana sayfa, Kurumsal (`hakkimizda.php`), Hizmetler (`hizmetler.php`), Online çözümler (`online-cozumler.php`), Araç filomuz (`filo.php`), İletişim ve teklif formu (`iletisim.php`)
+- Ana sayfa: fotoğraflı banner, hizmetler, online çözümler özeti, kurumsal özet, teklif bandı
 - Online ulaşım çözümleri tanıtım bölümü (firma ekranı ve mobil uygulama anlatımı; metinler ve ekran görüntüleri panelden değiştirilebilir)
 - Her hizmet için ayrı detay sayfası (`hizmet.php?s=...`)
 - Teklif formu: talepler panele düşer, isteğe bağlı e-posta bildirimi gider
@@ -76,10 +77,15 @@ Ardından `http://localhost:8000` (site) ve `http://localhost:8000/admin` (panel
 
 ```
 index.php            Ana sayfa
+hakkimizda.php       Kurumsal
+hizmetler.php        Hizmetler
+online-cozumler.php  Online ulaşım çözümleri
+filo.php             Araç filosu
+iletisim.php         İletişim ve teklif formu
 hizmet.php           Hizmet detay sayfası
 teklif.php           Teklif formu işleyicisi
 admin/               Yönetim paneli
-includes/            Veritabanı, yardımcı fonksiyonlar, şablon parçaları
+includes/            Veritabanı, yardımcı fonksiyonlar, şablon parçaları (parts/)
 assets/              CSS, JS, logo
 data/                SQLite veritabanı (otomatik oluşur, dışarıya kapalı)
 uploads/             Panelden yüklenen görseller
