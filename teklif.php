@@ -8,6 +8,11 @@ $back = url('iletisim.php') . '#teklif';
 // Bot tuzağı
 if (!empty($_POST['website'])) redirect($back);
 
+// Güvenlik sorusu: beklenen cevap tek kullanımlık
+$cap_expected = $_SESSION['captcha'] ?? null;
+unset($_SESSION['captcha']);
+$cap_answer = preg_replace('/\D/', '', (string)($_POST['captcha'] ?? ''));
+
 $f = fn(string $k, int $max) => mb_substr(trim((string)($_POST[$k] ?? '')), 0, $max);
 $r = [
     'name'        => $f('name', 120),
@@ -25,6 +30,7 @@ $err = null;
 if ($r['name'] === '' || $r['phone'] === '') $err = 'Ad soyad ve telefon alanlarını doldurun.';
 elseif (strlen(preg_replace('/\D/', '', $r['phone'])) < 10) $err = 'Telefon numarasını alan koduyla birlikte yazın.';
 elseif ($r['email'] !== '' && !filter_var($r['email'], FILTER_VALIDATE_EMAIL)) $err = 'E-posta adresi geçerli görünmüyor.';
+elseif ($cap_expected === null || $cap_answer === '' || (int)$cap_answer !== (int)$cap_expected) $err = 'Güvenlik sorusunun cevabı hatalı. Lütfen yeni soruyu cevaplayıp tekrar gönderin.';
 elseif (empty($_POST['consent'])) $err = 'Göndermek için iletişim onayı kutusunu işaretleyin.';
 
 // Aynı IP'den 10 dakikada en fazla 5 talep
