@@ -89,6 +89,21 @@ function migrate(PDO $pdo): void
         at INTEGER NOT NULL
     );
     ");
+
+    // Sonradan eklenen sütunlar (mevcut veritabanlarını bozmadan)
+    add_column($pdo, 'requests', 'company', "TEXT NOT NULL DEFAULT ''");
+    add_column($pdo, 'requests', 'shift', "TEXT NOT NULL DEFAULT ''");
+    add_column($pdo, 'clients', 'sector', "TEXT NOT NULL DEFAULT ''");
+    add_column($pdo, 'clients', 'detail', "TEXT NOT NULL DEFAULT ''");
+    add_column($pdo, 'clients', 'since', "TEXT NOT NULL DEFAULT ''");
+}
+
+function add_column(PDO $pdo, string $table, string $col, string $def): void
+{
+    foreach ($pdo->query('PRAGMA table_info(' . $table . ')') as $c) {
+        if ($c['name'] === $col) return;
+    }
+    $pdo->exec('ALTER TABLE ' . $table . ' ADD COLUMN ' . $col . ' ' . $def);
 }
 
 function seed(PDO $pdo): void
@@ -140,7 +155,7 @@ function ensure_settings(PDO $pdo): void
         'about_image'      => '',
         'online_label'     => 'Online ulaşım çözümleri',
         'online_title'     => 'Taşımacılığı teknolojiyle birleştirdik',
-        'online_text'      => 'Servislerinizi veriyle yönetiyoruz: canlı takip, dijital raporlama ve anlık bildirim.',
+        'online_text'      => 'Servislerinizi veriyle yönetiyoruz: canlı takip, dijital raporlama ve anında bildirim.',
         'online_company_title' => 'Firma ekranında',
         'online_company'   => "Tüm servisleriniz tek listede; her seferin detayına anında ulaşın.\nGüzergâh ve yolcuları canlı harita üzerinde tek bakışta görün.\nSürücü ve araç evraklarını dijital arşivden denetleyin, süresi yaklaşan belgeler için uyarı alın.\nHer seferin süresini, mesafesini ve maliyetini ölçün.\nBiniş-iniş saatlerini raporlayın, raporları Excel veya PDF olarak alın.",
         'online_mobile_title' => 'Yolcu ve veli mobilde',
@@ -148,6 +163,14 @@ function ensure_settings(PDO $pdo): void
         'online_benefits'  => "Operasyonel verimlilik | Tüm filo ve güzergâhlar tek ekranda; planlama ve raporlama dakikalar içinde.\nGüvenli ve şeffaf ulaşım | Araç ve sürücü bilgileri güncel; gerçek zamanlı harita takibiyle her servis kontrol altında.\nYolcu memnuniyeti | Yolcular servisini canlı görür, bildirimlerle yolculuğun her adımından haberdar olur.",
         'online_img_company' => '',
         'online_img_mobile'  => '',
+        'trust_title'      => 'Kurumların bize güvenme sebepleri',
+        'trust_text'       => 'Personel servisinde aksayan tek bir sefer bütün vardiyayı etkiler. Bu yüzden belgeden bakıma, takipten yedek araca kadar her ayrıntıyı önceden planlıyoruz.',
+        'trust_items'      => "Yetki belgeli taşımacılık | Personel taşımacılığı için gerekli yetki belgeleri ve ruhsatlarla çalışırız.\nSigortalı yolculuk | Yolcularımız zorunlu koltuk sigortası kapsamında seyahat eder.\nCanlı araç takibi | Servislerinizin konumunu ve seferlerini online takip sistemiyle anlık görürsünüz.\nBakımlı ve denetimli filo | Araçlarımız periyodik bakım ve muayeneden geçer, evrakları dijital olarak takip edilir.\nYedek araç desteği | Arıza durumunda seferin aksamaması için yedek araç planlaması yapılır.\nTek muhatap | Güzergah, vardiya ve faturalama için size tek bir sorumlu kişi atanır.",
+        'stats'            => '',
+        'brochure'         => '',
+        'brochure_label'   => 'Kurumsal tanıtım dosyası',
+        'telegram_token'   => '',
+        'telegram_chat'    => '',
     ];
     $st = $pdo->prepare('INSERT OR IGNORE INTO settings(key, value) VALUES(?, ?)');
     foreach ($settings as $k => $v) $st->execute([$k, $v]);
