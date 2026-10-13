@@ -238,19 +238,147 @@ function delete_upload(string $name): void
     if (is_file($p)) @unlink($p);
 }
 
-function notify_new_request(array $r): void
+/** Teklif formundaki vardiya seçenekleri */
+function shift_options(): array
 {
+    return ['Tek vardiya', 'İki vardiya', 'Üç vardiya', 'Ofis saatleri', 'Tek seferlik / organizasyon'];
+}
+
+function request_summary(array $r): string
+{
+    $lines = [
+        'Firma / kurum' => $r['company'] ?? '',
+        'Yetkili' => $r['name'],
+        'Telefon' => $r['phone'],
+        'E-posta' => $r['email'],
+        'Hizmet' => $r['service'],
+        'Kişi sayısı' => $r['passengers'],
+        'Vardiya düzeni' => $r['shift'] ?? '',
+        'Kalkış / ilçeler' => $r['route_from'],
+        'İş yeri / varış' => $r['route_to'],
+        'Başlangıç tarihi' => $r['travel_date'] ? date('d.m.Y', strtotime($r['travel_date'])) : '',
+    ];
+    $out = '';
+    foreach ($lines as $k => $v) if (trim((string)$v) !== '') $out .= "$k: $v\n";
+    if (trim($r['message']) !== '') $out .= "\nMesaj:\n{$r['message']}\n";
+    return $out;
+}
+
+function site_host(): string
+{
+    return preg_replace('/[^a-z0-9.\-:]/i', '', $_SERVER['HTTP_HOST'] ?? 'yarentur.com.tr');
+}
+
+function notify_new_request(array $r, int $id = 0): void
+{
+    $summary = request_summary($r);
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https' ? 'https' : 'http';
+    $link = $id ? $scheme . '://' . site_host() . url('admin/requests.php?id=' . $id) : '';
+
+    // Telegram
+    $title = ($r['company'] ?? '') !== '' ? $r['company'] . ' (' . $r['name'] . ')' : $r['name'];
+    telegram_send("🚌 Yeni teklif talebi: $title\n\n" . $summary . ($link ? "\nPanelde aç: $link" : ''));
+
+    // E-posta
     $to = setting('notify_email');
     if ($to === '' || !filter_var($to, FILTER_VALIDATE_EMAIL)) return;
-    $host = preg_replace('/[^a-z0-9.\-]/i', '', $_SERVER['HTTP_HOST'] ?? 'yarentur.com.tr');
-    $subject = '=?UTF-8?B?' . base64_encode('Yeni teklif talebi: ' . $r['name']) . '?=';
-    $body = "Web sitesinden yeni bir teklif talebi geldi.\n\n"
-        . "Ad soyad: {$r['name']}\nTelefon: {$r['phone']}\nE-posta: {$r['email']}\n"
-        . "Hizmet: {$r['service']}\nNereden: {$r['route_from']}\nNereye: {$r['route_to']}\n"
-        . "Kişi sayısı: {$r['passengers']}\nTarih: {$r['travel_date']}\n\nMesaj:\n{$r['message']}\n";
+    $host = preg_replace('/:\d+$/', '', site_host());
+    $subject = '=?UTF-8?B?' . base64_encode('Yeni teklif talebi: ' . $title) . '?=';
+    $body = "Web sitesinden yeni bir teklif talebi geldi.\n\n" . $summary . ($link ? "\nPanelde aç: $link\n" : '');
     $headers = "From: Yaren Tur Web <noreply@{$host}>\r\nContent-Type: text/plain; charset=UTF-8\r\n";
     if (filter_var($r['email'], FILTER_VALIDATE_EMAIL)) $headers .= "Reply-To: {$r['email']}\r\n";
     @mail($to, $subject, $body, $headers);
+}
+
+/* ---------- Telegram ---------- */
+
+/** Basit HTTP isteği (cURL varsa onunla). Hata olursa null döner. */
+function http_request(string $url, ?array $post = null): ?string
+{
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 8, CURLOPT_CONNECTTIMEOUT => 5]);
+        if ($post !== null) {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+        }
+        $res = curl_exec($ch);
+        curl_close($ch);
+        return is_string($res) ? $res : null;
+    }
+    $opts = ['http' => ['timeout' => 8, 'ignore_errors' => true]];
+    if ($post !== null) {
+        $opts['http'] += ['method' => 'POST', 'header' => "Content-Type: application/x-www-form-urlencoded\r\n", 'content' => http_build_query($post)];
+    }
+    $res = @file_get_contents($url, false, stream_context_create($opts));
+    return is_string($res) ? $res : null;
+}
+
+function telegram_token_ok(string $t): bool
+{
+    return (bool)preg_match('/^\d{5,}:[A-Za-z0-9_-]{20,}$/', $t);
+}
+
+/** Telegram mesajı gönderir. Ayarlar boşsa sessizce false döner. */
+function telegram_send(string $text, ?string &$error = null): bool
+{
+    $token = setting('telegram_token');
+    $chat = setting('telegram_chat');
+    if ($token === '' || $chat === '') { $error = 'Bot token ve sohbet ID girilmemiş.'; return false; }
+    if (!telegram_token_ok($token)) { $error = 'Bot token biçimi hatalı.'; return false; }
+    $res = http_request('https://api.telegram.org/bot' . $token . '/sendMessage', [
+        'chat_id' => $chat,
+        'text' => mb_substr($text, 0, 4000),
+        'disable_web_page_preview' => 'true',
+    ]);
+    if ($res === null) { $error = 'Sunucu Telegram\'a bağlanamadı.'; return false; }
+    $j = json_decode($res, true);
+    if (empty($j['ok'])) { $error = 'Telegram yanıtı: ' . ($j['description'] ?? 'bilinmeyen hata'); return false; }
+    return true;
+}
+
+/** Bota son mesaj atılan sohbetin ID'sini bulur */
+function telegram_find_chat(?string &$error = null): ?array
+{
+    $token = setting('telegram_token');
+    if (!telegram_token_ok($token)) { $error = 'Önce geçerli bir bot token girip kaydedin.'; return null; }
+    $res = http_request('https://api.telegram.org/bot' . $token . '/getUpdates');
+    if ($res === null) { $error = 'Sunucu Telegram\'a bağlanamadı.'; return null; }
+    $j = json_decode($res, true);
+    if (empty($j['ok'])) { $error = 'Telegram yanıtı: ' . ($j['description'] ?? 'bilinmeyen hata'); return null; }
+    foreach (array_reverse($j['result'] ?? []) as $u) {
+        $chat = $u['message']['chat'] ?? $u['channel_post']['chat'] ?? $u['my_chat_member']['chat'] ?? null;
+        if ($chat && isset($chat['id'])) {
+            $name = $chat['title'] ?? trim(($chat['first_name'] ?? '') . ' ' . ($chat['last_name'] ?? ''));
+            return ['id' => (string)$chat['id'], 'name' => $name ?: 'sohbet'];
+        }
+    }
+    $error = 'Bota henüz mesaj gelmemiş. Telegram\'da botunuza bir mesaj yazıp tekrar deneyin.';
+    return null;
+}
+
+/* ---------- PDF yükleme ---------- */
+
+function upload_pdf(string $field): string
+{
+    if (empty($_FILES[$field]) || ($_FILES[$field]['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) return '';
+    $f = $_FILES[$field];
+    if ($f['error'] !== UPLOAD_ERR_OK) throw new RuntimeException('Dosya yüklenemedi (hata kodu ' . $f['error'] . ').');
+    if ($f['size'] > 15 * 1024 * 1024) throw new RuntimeException('PDF en fazla 15 MB olabilir.');
+    $head = (string)file_get_contents($f['tmp_name'], false, null, 0, 5);
+    if ($head !== '%PDF-') throw new RuntimeException('Yalnızca PDF dosyası yükleyebilirsiniz.');
+    if (!is_dir(UPLOAD_DIR)) mkdir(UPLOAD_DIR, 0755, true);
+    $name = 'tanitim-' . date('Ymd') . '-' . bin2hex(random_bytes(4)) . '.pdf';
+    if (!move_uploaded_file($f['tmp_name'], UPLOAD_DIR . '/' . $name)) {
+        throw new RuntimeException('Dosya kaydedilemedi. uploads klasörünün yazma iznini kontrol edin.');
+    }
+    return $name;
+}
+
+function brochure_url(): string
+{
+    $b = setting('brochure');
+    return ($b !== '' && is_file(UPLOAD_DIR . '/' . $b)) ? upload_url($b) : '';
 }
 
 /* ---------- İkonlar ---------- */
@@ -279,6 +407,13 @@ function icon(string $name, string $class = 'ico'): string
         'smile'     => '<circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/>',
         'monitor'   => '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
         'mobile'    => '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
+        'file'      => '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5"/><path d="M12 12v6M9 15l3 3 3-3"/>',
+        'doc'       => '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+        'pinmap'    => '<path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><path d="M9 9h6"/>',
+        'wrench'    => '<path d="M14.5 6.5a4 4 0 0 0-5.3 5.3L4 17l3 3 5.2-5.2a4 4 0 0 0 5.3-5.3l-2.4 2.4-2.6-.4-.4-2.6 2.4-2.4z"/>',
+        'swap'      => '<path d="M4 8h13l-3-3M20 16H7l3 3"/>',
+        'user'      => '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+        'building'  => '<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3"/>',
     ];
     $p = $paths[$name] ?? $paths['bus'];
     return '<svg class="' . e($class) . '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $p . '</svg>';
@@ -338,4 +473,14 @@ function setting_pairs(string $key): array
         $items[] = ['title' => $t, 'text' => $d];
     }
     return $items;
+}
+
+/** Güven maddesi için başlığa göre ikon */
+function trust_icon(string $title): string
+{
+    $t = mb_strtolower($title);
+    $map = ['belge' => 'doc', 'ruhsat' => 'doc', 'sigorta' => 'shield', 'takip' => 'pinmap', 'bakım' => 'wrench',
+            'yedek' => 'swap', 'muhatap' => 'user', 'sorumlu' => 'user', 'zaman' => 'clock', 'şoför' => 'user', 'sürücü' => 'user'];
+    foreach ($map as $k => $ico) if (str_contains($t, $k)) return $ico;
+    return 'check';
 }
