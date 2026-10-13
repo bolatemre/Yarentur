@@ -5,6 +5,12 @@
       <p>Güzergahınızı ve yolcu sayınızı yazın, size en kısa sürede dönüş yapalım. Acil durumlarda doğrudan arayabilirsiniz.</p>
       <a class="quote__phone" href="<?= e(tel_href(setting('phone'))) ?>"><?= icon('phone') ?><?= e(setting('phone')) ?></a>
     </div>
+    <?php
+      // Basit robot kontrolü: her gösterimde yeni bir toplama sorusu
+      $cap_a = random_int(1, 9);
+      $cap_b = random_int(1, 9);
+      $_SESSION['captcha'] = $cap_a + $cap_b;
+    ?>
     <form class="form" method="post" action="<?= e(url('teklif.php')) ?>">
       <?php if ($flash): ?>
         <div class="alert alert--<?= e($flash['type']) ?>" role="status"><?= e($flash['msg']) ?></div>
@@ -36,6 +42,7 @@
         <label class="fld"><span>Tarih</span><input name="travel_date" type="date" value="<?= e($old['travel_date'] ?? '') ?>"></label>
       </div>
       <label class="fld"><span>Mesajınız</span><textarea name="message" rows="4" maxlength="2000"><?= e($old['message'] ?? '') ?></textarea></label>
+      <label class="fld"><span>Güvenlik sorusu: <?= $cap_a ?> + <?= $cap_b ?> kaç eder? *</span><input name="captcha" inputmode="numeric" pattern="[0-9]*" required maxlength="3" autocomplete="off"></label>
       <label class="consent"><input type="checkbox" name="consent" value="1" required> İletişim bilgilerimin teklif hazırlanması için kullanılmasını kabul ediyorum.</label>
       <button class="btn btn--solid btn--lg form__send" type="submit">Teklif isteğini gönder</button>
     </form>
