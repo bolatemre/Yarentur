@@ -12,7 +12,7 @@ if (!$svc) {
     require __DIR__ . '/includes/footer.php';
     exit;
 }
-$page_title = $svc['title'];
+$page_title = $svc['title'] . (setting('seo_region') ? ' ' . setting('seo_region') : '');
 $page_desc  = $svc['summary'];
 $active = 'services';
 $others = array_filter(active_services(), fn($s) => $s['id'] !== $svc['id']);

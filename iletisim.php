@@ -2,7 +2,7 @@
 require __DIR__ . '/includes/page.php';
 $active = 'contact';
 $page_title = 'İletişim ve teklif';
-$page_desc = 'Yaren Tur iletişim bilgileri ve servis teklif formu.';
+$page_desc = 'Yaren Tur iletişim bilgileri. Personel servisi ve kurumsal taşımacılık için 1 dakikada teklif isteyin, size özel güzergah ve fiyatla dönelim.';
 $flash = flash();
 $old = $_SESSION['old_form'] ?? [];
 unset($_SESSION['old_form']);
