@@ -1,9 +1,10 @@
 <?php
 /** @var string $page_title */
 /** @var string $page_desc */
+require_once __DIR__ . '/seo.php';
 $siteTitle = setting('site_title', 'Yaren Tur');
-$title = isset($page_title) && $page_title ? $page_title . ' | ' . $siteTitle : $siteTitle . ' | Öğrenci ve Personel Taşımacılığı';
-$desc = $page_desc ?? setting('meta_description');
+$title = isset($page_title) && $page_title ? $page_title . ' | ' . $siteTitle : setting('seo_home_title', 'Personel Taşımacılığı ve Servis Hizmetleri') . ' | ' . $siteTitle;
+$desc = $page_desc ?? setting('seo_home_description', setting('meta_description'));
 $phone = setting('phone');
 $home = url('');
 ?><!doctype html>
@@ -13,16 +14,13 @@ $home = url('');
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title><?= e($title) ?></title>
 <meta name="description" content="<?= e($desc) ?>">
-<meta property="og:title" content="<?= e($title) ?>">
-<meta property="og:description" content="<?= e($desc) ?>">
-<meta property="og:type" content="website">
-<meta name="theme-color" content="#018231">
+<?= seo_head($title, $desc) ?><meta name="theme-color" content="#018231">
 <link rel="icon" href="<?= e(url('assets/img/favicon.svg')) ?>" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Saira:wdth,wght@112.5,600;112.5,700;112.5,800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?= e(url('assets/css/style.css')) ?>?v=3">
-<link rel="stylesheet" href="<?= e(url('assets/css/kurumsal.css')) ?>?v=1">
+<link rel="stylesheet" href="<?= e(url('assets/css/kurumsal.css')) ?>?v=2">
 </head>
 <body>
 <a class="skip" href="#icerik">İçeriğe geç</a>

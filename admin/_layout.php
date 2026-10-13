@@ -21,6 +21,7 @@ function admin_header(string $title, string $active = ''): void
         'vehicles' => ['Araç filosu', 'vehicles.php'],
         'clients' => ['Referanslar', 'clients.php'],
         'settings' => ['Site ayarları', 'settings.php'],
+        'seo' => ['SEO', 'seo.php'],
         'account' => ['Hesabım', 'account.php'],
     ];
     $f = flash();
