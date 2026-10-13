@@ -155,7 +155,7 @@ function ensure_settings(PDO $pdo): void
         'about_image'      => '',
         'online_label'     => 'Online ulaşım çözümleri',
         'online_title'     => 'Taşımacılığı teknolojiyle birleştirdik',
-        'online_text'      => 'Servislerinizi veriyle yönetiyoruz: canlı takip, dijital raporlama ve anında bildirim.',
+        'online_text'      => 'Servislerinizi veriyle yönetiyoruz: canlı takip, dijital raporlama ve anlık bildirim.',
         'online_company_title' => 'Firma ekranında',
         'online_company'   => "Tüm servisleriniz tek listede; her seferin detayına anında ulaşın.\nGüzergâh ve yolcuları canlı harita üzerinde tek bakışta görün.\nSürücü ve araç evraklarını dijital arşivden denetleyin, süresi yaklaşan belgeler için uyarı alın.\nHer seferin süresini, mesafesini ve maliyetini ölçün.\nBiniş-iniş saatlerini raporlayın, raporları Excel veya PDF olarak alın.",
         'online_mobile_title' => 'Yolcu ve veli mobilde',
