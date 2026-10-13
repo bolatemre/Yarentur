@@ -22,6 +22,7 @@ $home = url('');
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Saira:wdth,wght@112.5,600;112.5,700;112.5,800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?= e(url('assets/css/style.css')) ?>?v=3">
+<link rel="stylesheet" href="<?= e(url('assets/css/kurumsal.css')) ?>?v=1">
 </head>
 <body>
 <a class="skip" href="#icerik">İçeriğe geç</a>

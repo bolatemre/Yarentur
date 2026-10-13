@@ -59,5 +59,6 @@ $home = url('');
 <a class="wa-float" href="<?= e($wa) ?>" target="_blank" rel="noopener" aria-label="WhatsApp ile yazın"><?= icon('wa') ?></a>
 <?php endif; ?>
 <script src="<?= e(url('assets/js/main.js')) ?>?v=3" defer></script>
+<script src="<?= e(url('assets/js/teklif.js')) ?>?v=1" defer></script>
 </body>
 </html>

@@ -1,0 +1,69 @@
+/* Yaren Tur — kurumsal bölümler: teklif sihirbazı, güven bölümü, referans kartları */
+/* Teklif sihirbazı */
+.quote__steps-info { list-style: none; padding: 0; margin: 1.5rem 0; display: grid; gap: .6rem; }
+.quote__steps-info li { display: flex; align-items: center; gap: .75rem; color: rgba(255,255,255,.92); font-weight: 600; }
+.quote__steps-info b { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.16); font: 700 .95rem var(--display); flex: none; }
+.quote__doc { margin: 1.25rem 0 0; }
+.quote__doc a { display: inline-flex; align-items: center; gap: .5rem; color: #fff; font-weight: 700; }
+.quote__doc a:hover { color: var(--bus); }
+.wiz__step { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 1rem; }
+.wiz__title { display: flex; align-items: center; gap: .6rem; font: 700 1.3rem var(--display); padding: 0; margin: 0 0 .25rem; color: var(--ink); }
+.wiz__title .ico { color: var(--green); width: 1.4em; height: 1.4em; }
+.wiz__bar, .wiz__count { display: none; }
+.wiz--on .wiz__bar { display: block; height: 6px; border-radius: 3px; background: var(--mist); overflow: hidden; }
+.wiz--on .wiz__bar span { display: block; height: 100%; width: 33%; background: var(--green); border-radius: 3px; transition: width .3s ease; }
+.wiz--on .wiz__count { display: block; margin: -.4rem 0 0; font-size: .9rem; font-weight: 600; color: var(--grey); }
+.wiz:not(.wiz--on) .wiz__step + .wiz__step { padding-top: 1.25rem; border-top: 1px solid var(--line); }
+.wiz__nav { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
+.wiz__next, .form__send { margin-left: auto; }
+.wiz__next .ico { width: 1.1em; height: 1.1em; }
+.wiz [hidden] { display: none !important; }
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.chip span { display: inline-block; padding: .55rem .95rem; border: 1.5px solid var(--line); border-radius: 999px; font-weight: 600; font-size: .95rem; cursor: pointer; transition: all .15s; }
+.chip input:hover + span { border-color: var(--green); }
+.chip input:checked + span { background: var(--green); border-color: var(--green); color: #fff; }
+.chip input:focus-visible + span { outline: 3px solid var(--bus); outline-offset: 2px; }
+
+/* Güven bölümü */
+.trust { background: var(--mist); }
+.trust__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+.trust__head .h2::before { content: ""; display: block; width: 44px; height: 4px; border-radius: 2px; background: var(--green); margin-bottom: 1rem; }
+.trust__doc { display: inline-flex; align-items: center; gap: .9rem; padding: 1rem 1.25rem; background: #fff; border: 1.5px solid var(--line); border-radius: 10px; text-decoration: none; color: var(--ink); transition: border-color .15s, transform .15s; }
+.trust__doc:hover { border-color: var(--green); color: var(--ink); transform: translateY(-2px); }
+.trust__doc strong { display: block; font: 700 1.05rem var(--display); }
+.trust__doc small { color: var(--grey); font-size: .9rem; }
+.trust__doc-ico { width: 46px; height: 46px; border-radius: 10px; background: var(--green); color: #fff; display: grid; place-items: center; flex: none; }
+.trust__stats { list-style: none; margin: 0 0 2rem; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
+.trust__stats li { background: var(--green); color: #fff; border-radius: 12px; padding: 1.4rem 1.5rem; display: grid; gap: .2rem; }
+.trust__stats b { font: 800 clamp(2rem, 1.5rem + 1.5vw, 2.6rem)/1 var(--display); }
+.trust__stats span { color: rgba(255,255,255,.88); font-weight: 600; }
+.trust__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+.trust__grid li { background: #fff; border-radius: 12px; padding: 1.6rem; display: grid; gap: .45rem; align-content: start; border: 1px solid var(--line); }
+.trust__grid strong { font: 700 1.2rem var(--display); }
+.trust__grid span:not(.trust__ico) { color: #50565a; }
+.trust__ico { width: 46px; height: 46px; border-radius: 10px; background: var(--green-tint); color: var(--green); display: grid; place-items: center; margin-bottom: .4rem; }
+
+/* Referans vaka kartları */
+.cases { padding-bottom: 2rem; }
+.cases__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
+.case { border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; display: grid; gap: .9rem; align-content: start; border-top: 4px solid var(--green); }
+.case__top { display: flex; align-items: center; gap: .9rem; }
+.case__logo { width: 56px; height: 56px; object-fit: contain; border-radius: 8px; background: #fff; border: 1px solid var(--line); padding: 4px; flex: none; }
+.case__mono { width: 56px; height: 56px; border-radius: 8px; background: var(--ink); color: #fff; display: grid; place-items: center; font: 800 1.5rem var(--display); flex: none; }
+.case__name { display: block; font: 700 1.15rem/1.2 var(--display); }
+.case__sector { color: var(--grey); font-size: .95rem; }
+.case__detail { margin: 0; font: 600 1.1rem/1.4 var(--body); color: var(--ink); }
+.case__since { display: inline-flex; align-items: center; gap: .4rem; color: var(--green-deep); font-weight: 600; font-size: .95rem; }
+.case__since .ico { width: 1.05em; height: 1.05em; }
+
+@media (max-width: 960px) {
+  .trust__grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 680px) {
+  .trust__grid { grid-template-columns: 1fr; }
+  .trust__doc { width: 100%; }
+  .wiz__nav .btn { flex: 1; }
+  .wiz__next, .form__send { margin-left: 0; }
+}

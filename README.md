@@ -11,9 +11,12 @@ Saf PHP + SQLite ile yazıldı. Composer, Node veya ayrı bir MySQL veritabanı 
 - Ana sayfa: fotoğraflı banner, hizmetler, online çözümler özeti, kurumsal özet, teklif bandı
 - Online ulaşım çözümleri tanıtım bölümü (firma ekranı ve mobil uygulama anlatımı; metinler ve ekran görüntüleri panelden değiştirilebilir)
 - Her hizmet için ayrı detay sayfası (`hizmet.php?s=...`)
-- Teklif formu: talepler panele düşer, isteğe bağlı e-posta bildirimi gider
+- Kurumsal teklif sihirbazı (3 adım: firma bilgileri, servis ihtiyacı ve vardiya düzeni, not ve gönderim); talepler panele düşer, isteğe bağlı e-posta ve Telegram bildirimi gider
+- Kurumsal güven bölümü (panelden düzenlenen maddeler ve isteğe bağlı rakamlar)
+- Referans vaka kartları ("3 vardiya, 14 araç" gibi çalışma özetiyle)
+- İndirilebilir kurumsal tanıtım dosyası (PDF)
 - Mobilde alt bar (Arayın / WhatsApp / Teklif alın), masaüstünde WhatsApp butonu
-- Spam koruması (gizli alan + IP başına sınır), CSRF koruması
+- Spam koruması (toplama işlemli güvenlik sorusu + gizli alan + IP başına sınır), CSRF koruması
 
 **Yönetim paneli (`/admin`)**
 - Özet ekranı: yanıt bekleyen ve son talepler
@@ -21,8 +24,8 @@ Saf PHP + SQLite ile yazıldı. Composer, Node veya ayrı bir MySQL veritabanı 
 - Banner görselleri: ana sayfa fotoğraflarını ekle, sırala, odak noktasını ayarla
 - Hizmetler: ekle, düzenle, sırala, gizle, görsel yükle
 - Araç filosu: kapasite, özellikler, fotoğraf
-- Referanslar: kurum adı ve logo
-- Site ayarları: logo, hakkımızda fotoğrafı, telefon, WhatsApp, adres, harita, ana sayfa ve online çözümler metinleri
+- Referanslar: kurum adı, logo, sektör, çalışma özeti ve başlangıç yılı; düzenleme
+- Site ayarları: logo, hakkımızda fotoğrafı, telefon, WhatsApp, adres, harita, ana sayfa, online çözümler ve güven bölümü metinleri, tanıtım dosyası (PDF), Telegram bildirimi
 - Hesabım: şifre değiştirme, yönetici ekleme
 - Hatalı girişlerde 15 dakikalık kilit
 
@@ -53,6 +56,10 @@ Veritabanı (`data/yarentur.sqlite`) ilk açılışta örnek hizmet ve araçlarl
 
 Google Haritalar'da firmayı bulun → **Paylaş → Harita yerleştir → HTML'yi kopyala**. Kopyaladığınız `<iframe ...>` kodunu olduğu gibi Site ayarlarındaki harita alanına yapıştırın; panel adresi kendisi ayıklar.
 
+### Telegram bildirimi
+
+Site ayarlarının en altındaki **Telegram bildirimi** bölümünde adımlar yazılıdır: @BotFather ile bot oluşturun, token'ı yapıştırın, bota mesaj atın, "Sohbet ID'sini bul" ve "Test mesajı gönder" butonlarını kullanın. Sunucunun dışarıya HTTPS bağlantısı (cURL veya allow_url_fopen) açık olmalıdır.
+
 ### E-posta bildirimi
 
 Site ayarlarında "Yeni teklif bildirimlerinin gideceği e-posta" alanını doldurun. Bildirim PHP `mail()` ile gönderilir; Hostinger'da bu adresin alan adına ait bir e-posta hesabı olması teslim oranını artırır.
@@ -61,9 +68,15 @@ Site ayarlarında "Yeni teklif bildirimlerinin gideceği e-posta" alanını dold
 
 Tüm içerik iki yerde durur: `data/yarentur.sqlite` (metinler, talepler, kullanıcılar) ve `uploads/` (yüklenen görseller). Bu ikisini düzenli olarak indirmeniz yeterli. Bu dosyalar `.gitignore` ile repodan hariç tutulur.
 
-## Güncelleme
+## Güncelleme (otomatik yükleme)
 
-Yeni sürümü yüklerken `data/` ve `uploads/` klasörlerinin üzerine yazmayın; diğer dosyaları değiştirmeniz yeterli.
+Site Natro'da barınıyor. `main` dalına gönderilen her değişiklik GitHub Actions (`.github/workflows/deploy.yml`) ile FTP üzerinden `public_html/` klasörüne otomatik yüklenir; yalnızca değişen dosyalar gönderilir. `data/`, `uploads/` ve kök `.htaccess` yükleme dışında tutulur.
+
+Gerekli secret'lar (Settings → Secrets and variables → Actions): `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`.
+
+Elle yükleme yapılacaksa `data/` ve `uploads/` klasörlerinin üzerine yazmayın.
+
+Veritabanı şeması kendiliğinden güncellenir: yeni sütunlar ve ayarlar ilk istekte mevcut verilere dokunmadan eklenir.
 
 ## Yerelde çalıştırma
 
