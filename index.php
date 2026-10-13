@@ -9,6 +9,7 @@ part('trust');
 part('online', ['teaser' => true]);
 part('about', ['teaser' => true]);
 part('clients');
+part('faq');
 part('cta');
 
 require __DIR__ . '/includes/footer.php';

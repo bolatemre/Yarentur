@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /teklif.php
+Disallow: /data/
+Disallow: /includes/
+
+Sitemap: https://yarentur.com.tr/sitemap.php

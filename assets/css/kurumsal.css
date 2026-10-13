@@ -67,3 +67,14 @@
   .wiz__nav .btn { flex: 1; }
   .wiz__next, .form__send { margin-left: 0; }
 }
+
+/* Sık sorulan sorular */
+.faq__in { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: start; }
+.faq__list { display: grid; gap: .75rem; }
+.faq__item { border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.faq__item summary { cursor: pointer; list-style: none; padding: 1.1rem 3rem 1.1rem 1.25rem; font: 700 1.1rem/1.35 var(--display); position: relative; }
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary::after { content: "+"; position: absolute; right: 1.25rem; top: 50%; transform: translateY(-50%); font: 700 1.5rem var(--body); color: var(--green); }
+.faq__item[open] summary::after { content: "–"; }
+.faq__item p { margin: 0; padding: 0 1.25rem 1.2rem; color: #50565a; }
+@media (max-width: 960px) { .faq__in { grid-template-columns: 1fr; } }
