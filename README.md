@@ -20,7 +20,7 @@ Saf PHP + SQLite ile yazıldı. Composer, Node veya ayrı bir MySQL veritabanı 
 
 **Yönetim paneli (`/admin`)**
 - Özet ekranı: yanıt bekleyen ve son talepler
-- Teklif talepleri: durum takibi (Yeni, Aranadı, Teklif verildi, Anlaşıldı, Olumsuz), iç not, arama, Excel'e (CSV) aktarma
+- Teklif talepleri: durum takibi (Yeni, Arandı, Teklif verildi, Anlaşıldı, Olumsuz), iç not, arama, Excel'e (CSV) aktarma
 - Banner görselleri: ana sayfa fotoğraflarını ekle, sırala, odak noktasını ayarla
 - Hizmetler: ekle, düzenle, sırala, gizle, görsel yükle
 - Araç filosu: kapasite, özellikler, fotoğraf
