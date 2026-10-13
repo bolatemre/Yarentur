@@ -7,6 +7,7 @@ require __DIR__ . '/includes/header.php';
 
 page_head('Kurumsal', 'Yaren Tur\'u, çalışma ilkelerimizi ve hizmet verdiğimiz kurumları tanıyın.', ['Kurumsal' => url('hakkimizda.php')]);
 part('about');
+part('trust');
 part('clients');
 part('cta');
 

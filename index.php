@@ -5,6 +5,7 @@ require __DIR__ . '/includes/header.php';
 
 part('hero');
 part('services');
+part('trust');
 part('online', ['teaser' => true]);
 part('about', ['teaser' => true]);
 part('clients');
